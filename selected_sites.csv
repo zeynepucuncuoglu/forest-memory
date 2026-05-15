@@ -1,0 +1,5 @@
+demo_role,SiteID,LandCoverClass,FireClass,FieldVeldAge,FieldAliensWithin20m,Latitude,Longitude,PairID,RecordingNum,Campaign,ElevationClass,score
+healthy_baseline,s2lam027_231127,Shrubland-Fynbos,No data or No Fire,Old (> 17 yrs),,-33.247096,18.19386,215,2151,Dry season,Low: 0-500 m,90.0
+burned_recovering,s2lam047_231107,Shrubland-Fynbos,1-to-6 years,"Young (burned, < 6 yrs)",Rare to Very Scattered,-34.355985,18.858381,58,1121,Dry season,Low: 0-500 m,91.0
+invasive_disturbed,s2lam051_231030,Forest-Woodland,6-to-12 years,Intermediate (6-17 yrs),Scattered to Medium,-33.949391,21.05756,97,1434,Dry season,Low: 0-500 m,91.0
+wet_dry_pair_complement (PairID=58),s2lam096_230823,Shrubland-Fynbos,1-to-6 years,Not available,Not available,-34.3561,18.8584,58,700,Wet season,Low: 0-500 m,
