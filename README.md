@@ -3,111 +3,85 @@
 
 > *"Green does not always mean ecologically healthy."*
 
-**Kaggle Gemma 4 Good Hackathon submission** — using on-device AI (LiteRT/YAMNet) and large language model reasoning (Gemma 4) to detect hidden ecological stress in South African biodiversity hotspots.
+**Kaggle Gemma 4 Good Hackathon** — Global Resilience Track + LiteRT Track
 
 ---
 
-## The Problem
+## The Story Behind This Project
 
-Conservation teams rely heavily on satellite NDVI (vegetation greenness index) to assess ecosystem health. But NDVI has a critical blind spot: **invasive plant species can produce high greenness scores while completely suppressing native fauna.**
+In the summers of 2021 and 2024, wildfires burned through hundreds of thousands of hectares of Turkish forests. Watching the satellite imagery of the destruction, I kept thinking: by the time a crisis is visible from space, it's already too late.
 
-A site can look perfectly healthy from space — and be acoustically dead.
+I wanted to build something that could **listen to a forest** — not just photograph it. A tool that detects ecological stress before it becomes disaster. Something cheap enough for a ranger in a remote area, with no internet, no cloud, no expensive infrastructure.
+
+The problem: Turkey has no acoustic monitoring data for its forests. To test this idea, I needed a dataset that didn't exist in my own country yet.
+
+That's why I turned to **BioSCape** (Biodiversity Survey of the Cape, South Africa) — one of the world's most comprehensive passive acoustic monitoring campaigns. BioSCape gave me real data to prove the concept works.
+
+**Forest Memory is a prototype built on borrowed data, aimed at forests that have never been listened to.** When the resources allow, the goal is to deploy this in Turkish forests — and eventually anywhere that needs it.
+
+---
 
 ## The Core Finding
 
-Across 4 BioSCape monitoring sites in the Cape Floristic Region:
+Satellite NDVI (vegetation greenness) has a critical blind spot: invasive plants look green. A forest taken over by invasive species can score the highest greenness index while its native wildlife has entirely collapsed.
 
-| Site | Expert Ecological Rank | Bioacoustic Vitality | NDVI |
-|------|----------------------|----------------------|------|
-| Healthy Baseline (s2lam027) | 4 — best | 41.1 ✅ | 0.507 |
-| Burned Recovering (s2lam047) | 3 | 35.2 ✅ | 0.508 |
-| **Invasive Disturbed (s2lam051)** | **2 — degraded** | **31.1** 🔴 | **0.677** 🟢 highest |
-| Wet/Dry Pair (s2lam096) | 1 — poorest | 10.8 ✅ | — |
+Across 4 BioSCape monitoring sites:
 
-The invasive-disturbed site has the **highest NDVI** (most "green" from space) but the **lowest bioacoustic vitality** (most acoustically dead on the ground). Bioacoustic vitality scores show perfect rank-order agreement with BioSCape expert site classifications (Spearman ρ = 1.00, n = 4).
+| Site | Expert Rank | Bioacoustic Vitality | NDVI |
+|------|:-----------:|:--------------------:|:----:|
+| Healthy Baseline | 4 — best | 41.1 ✅ | 0.507 |
+| Burned Recovering | 3 | 35.2 ✅ | 0.508 |
+| **Invasive Disturbed** | **2 — degraded** | **31.1** 🔴 | **0.677** 🟢 highest |
+| Wet/Dry Pair | 1 — poorest | 10.8 ✅ | — |
 
-NDVI would have ranked this site as the healthiest. Acoustic AI reveals the truth.
+Bioacoustic vitality scores show perfect rank-order agreement with BioSCape expert classifications (Spearman ρ = 1.00, n = 4). NDVI alone would rank the most degraded site as the healthiest.
 
 ---
 
-## Technical Approach
+## How It Works
 
 ```
-WAV recordings (BioSCape)
-    ├── scipy FFT → acoustic proxy scores (vitality, richness, bird/insect activity)
-    └── LiteRT (YAMNet TFLite) → ecological audio class scores
-                                  (bird, insect, rain, wind, human noise)
+LiteRT Ear  → YAMNet (3MB TFLite) classifies bird, insect, wind, human noise
+LiteRT Eye  → Satellite RGB pixel analysis + NDVI (Sentinel-2)
+Metadata    → BioSCape fire history, veld age, invasive species data
 
-Sentinel-2 imagery (Google Earth Engine)
-    └── NDVI extraction (500 m buffer, dry season 2023)
-
-BioSCape site metadata
-    └── fire class, veld age, invasive species presence
-
-All signals → Gemma 4 (gemma-4-31b-it) → ecological resilience report
+All signals → Gemma 4 → Ecological resilience report
 ```
 
-### LiteRT as Sensory Organs
+**LiteRT** runs YAMNet locally — no internet, no API, 3MB model. This is what makes the tool deployable in the field: a $50 passive recorder + Raspberry Pi + LiteRT = a complete edge ecological sensor.
 
-- **Ear:** YAMNet (AudioSet, 521 classes) runs via `ai_edge_litert` — classifies 0.96-second audio patches, aggregates bird, insect, rain, wind, and human-noise proxy scores
-- **Eye:** Sentinel-2 RGB pixel statistics (green dominance, burned-area signal, spatial heterogeneity) complement NDVI from Earth Engine
-
-### Gemma 4 as Reasoning Brain
-
-Two reasoning pipelines:
-
-1. **LiteRT Pipeline** (`04_litert_edge.ipynb`) — YAMNet scores + NDVI + FFT features → compact multimodal report
-2. **Structured Analysis** (`03_gemma_ecological_reasoning.ipynb`) — 5-section structured report per site: Vegetation Interpretation, Bioacoustic Interpretation, Multimodal Tension, Recovery Interpretation, Uncertainty Notes → followed by a cross-site synthesis
+**Gemma 4** fuses acoustic, visual, and metadata signals into structured ecological reports — flagging multimodal tension (high NDVI, low acoustic vitality), recovery trajectories, and uncertainty.
 
 ---
 
-## Datasets
+## Why This Matters
 
-1. **BioSCape BioSoundSCape Acoustic Recordings** — passive acoustic monitoring, Cape Floristic Region, South Africa
-2. **BioSCape Acoustic Site Metadata** — expert site classifications (fire class, veld age, invasive species presence)
-3. **Sentinel-2 SR Harmonized** via Google Earth Engine (`COPERNICUS/S2_SR_HARMONIZED`) — dry season 2023 composites
+The forests that need monitoring most are the ones furthest from data infrastructure. Field rangers in rural Turkey, the Amazon, or remote Borneo don't have reliable cloud access. Conservation NGOs in low-income countries can't afford continuous API costs.
 
----
-
-## Scientific Constraints
-
-All acoustic and spectral values are **proxy signals** only:
-- ✅ Ecosystem vitality estimation, proxy-based reasoning, uncertainty-aware interpretation
-- ❌ Exact species counts, confirmed species detections, wildfire prediction, ecosystem collapse diagnosis
-
-Proxy language is enforced throughout: *"proxy signal suggests"*, *"acoustic data may indicate"*, *"consistent with"*, *"uncertainty remains"*.
+This tool is designed to work where it's needed:
+- Sensing layer: fully offline via LiteRT
+- On-device Gemma (E2B/E4B) = fully offline reasoning (next step)
+- Total hardware cost: under $100
 
 ---
 
 ## Project Structure
 
 ```
-forest-memory/
-├── notebooks/
-│   ├── 01_audio_audit.ipynb          # WAV → FFT acoustic proxy scores
-│   ├── 03_gemma_ecological_reasoning.ipynb  # Gemma 4 structured analysis
-│   └── 04_litert_edge.ipynb          # LiteRT (YAMNet) + Gemma 4 pipeline
-├── src/
-│   ├── audio_signals.py              # FFT feature extraction
-│   ├── scoring.py                    # Proxy score computation
-│   ├── litert_sensing.py             # LiteRT ear + satellite eye
-│   └── build_forest_memory_cases.py  # Multimodal case builder
-├── outputs/
-│   ├── forest_memory_cases.json      # Merged multimodal cases
-│   └── gemma_reports/
-│       ├── gemma_reports.json        # Notebook 03 structured reports
-│       └── litert_multimodal_reports.json  # Notebook 04 LiteRT reports
-├── app.py                            # Gradio demo
-└── requirements.txt
+notebooks/
+├── 01_audio_audit.ipynb          # WAV → FFT acoustic proxy scores
+├── 03_gemma_ecological_reasoning.ipynb  # Gemma 4 structured analysis
+└── 04_litert_edge.ipynb          # LiteRT (YAMNet) + Gemma 4 pipeline
+src/
+├── audio_signals.py              # FFT feature extraction
+├── scoring.py                    # Proxy score computation
+├── litert_sensing.py             # LiteRT ear + satellite eye
+└── build_forest_memory_cases.py  # Multimodal case builder
+outputs/gemma_reports/
+├── gemma_reports.json            # Notebook 03 structured reports
+└── litert_multimodal_reports.json  # Notebook 04 LiteRT reports
+app.py                            # Gradio demo
 ```
-
----
-
-## Validation
-
-Bioacoustic vitality scores align perfectly in rank order with BioSCape expert ecological classifications (Spearman ρ = 1.00, n = 4). Acoustic richness showed no correlation (ρ = −0.20), confirming that soundscape complexity alone does not indicate ecosystem health.
-
-**Limitations:** n = 4 sites precludes statistical significance. Future validation against the full BioSCape survey (50+ sites) is needed.
 
 ---
 
@@ -115,15 +89,20 @@ Bioacoustic vitality scores align perfectly in rank order with BioSCape expert e
 
 ```bash
 pip install -r requirements.txt
-python app.py
-# → http://localhost:7860
+python app.py  # → http://localhost:7860
 ```
+
+---
+
+## Scientific Constraints
+
+All outputs use hedged language: *"proxy signal suggests"*, *"may indicate"*, *"consistent with"*. No exact species counts, no wildfire predictions, no definitive collapse diagnoses. Validated directionally against BioSCape expert classifications (n = 4; full statistical validation requires 50+ sites).
 
 ---
 
 ## Future Work
 
-- Validate against full BioSCape dataset (50+ sites) for statistical power
-- Add a LiteRT image classification model for satellite RGB (MobileNet/EfficientNet) as a true on-device visual sensor
-- Extend to other biomes (savanna, wetland, forest)
-- Deploy as edge tool for field rangers without internet connectivity
+- Validate against full BioSCape dataset (50+ sites)
+- Deploy on-device Gemma 4 E2B/E4B via LiteRT for fully offline reasoning
+- Pilot in Turkish forests with locally collected acoustic data
+- Extend to savanna, wetland, and tropical forest biomes
