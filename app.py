@@ -6,6 +6,10 @@ Multimodal ecological resilience reasoning: LiteRT (YAMNet) + Gemma 4
 import json
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
 import gradio as gr
 
 # ── Load pre-computed data ─────────────────────────────────────────────────────
@@ -163,6 +167,222 @@ def build_structured_report_md(role: str) -> str:
     return "\n".join(lines)
 
 
+# ── Cross-site comparison chart ───────────────────────────────────────────────
+
+def build_comparison_chart() -> plt.Figure:
+    short_labels = ["Healthy\nBaseline", "Burned\nRecovering", "Invasive\nDisturbed", "Wet/Dry\nPair"]
+    ndvi_vals, vitality_vals = [], []
+
+    for role in ROLE_KEYS:
+        case  = cases.get(role, {})
+        ndvi  = (case.get("ndvi") or {}).get("mean_ndvi")
+        audio = case.get("audio", {})
+        vit   = (audio.get("bioacoustic_vitality_score") or {}).get("mean")
+
+        ndvi_vals.append(ndvi if ndvi is not None else np.nan)
+        vitality_vals.append(vit / 100 if vit is not None else np.nan)
+
+    x     = np.arange(len(ROLE_KEYS))
+    width = 0.35
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    fig.patch.set_facecolor("#f8f9fa")
+    ax.set_facecolor("#f8f9fa")
+
+    bars_ndvi = ax.bar(
+        x - width / 2, ndvi_vals, width,
+        label="NDVI — satellite greenness (0–1)",
+        color="#4CAF50", alpha=0.88, zorder=3,
+    )
+    bars_vit = ax.bar(
+        x + width / 2, vitality_vals, width,
+        label="Bioacoustic Vitality ÷ 100  (proxy)",
+        color="#FF7043", alpha=0.88, zorder=3,
+    )
+
+    # N/A placeholder bars for missing NDVI
+    for i, v in enumerate(ndvi_vals):
+        if np.isnan(v):
+            ax.bar(
+                x[i] - width / 2, 0.08, width,
+                color="#cccccc", alpha=0.7, zorder=3,
+                hatch="////", edgecolor="#aaa",
+            )
+            ax.text(
+                x[i] - width / 2, 0.09,
+                "N/A", ha="center", va="bottom", fontsize=8, color="#888",
+            )
+
+    # Value labels on bars
+    for bar in list(bars_ndvi) + list(bars_vit):
+        h = bar.get_height()
+        if not np.isnan(h):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2, h + 0.015,
+                f"{h:.2f}", ha="center", va="bottom", fontsize=8.5, color="#333",
+            )
+
+    # Highlight invasive_disturbed
+    inv_i = ROLE_KEYS.index("invasive_disturbed")
+    ax.annotate(
+        "⚠  High NDVI\nLow Vitality",
+        xy=(inv_i - width / 2, ndvi_vals[inv_i]),
+        xytext=(inv_i + 0.85, 0.82),
+        fontsize=9, color="#c62828", fontweight="bold",
+        arrowprops=dict(arrowstyle="->", color="#c62828", lw=1.4),
+    )
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(short_labels, fontsize=10.5)
+    ax.set_ylim(0, 1.0)
+    ax.set_ylabel("Score (0 – 1)", fontsize=11)
+    ax.set_title(
+        "NDVI vs Bioacoustic Vitality — all 4 sites\n"
+        '"Green does not always mean ecologically healthy."',
+        fontsize=12, fontweight="bold", pad=12,
+    )
+    ax.legend(fontsize=10, loc="upper left")
+    ax.grid(axis="y", linestyle="--", alpha=0.4, zorder=0)
+    ax.set_axisbelow(True)
+
+    ax.annotate(
+        "† Wet/Dry Pair: NDVI unavailable — wet season cloud cover blocked Sentinel-2 composite",
+        xy=(1, -0.07), xycoords="axes fraction",
+        ha="right", fontsize=8, color="#888",
+    )
+
+    plt.tight_layout()
+    return fig
+
+
+# ── Recovery trajectory chart ─────────────────────────────────────────────────
+
+RECOVERY_DATA = [
+    {
+        "role":        "healthy_baseline",
+        "label":       "Healthy\nBaseline",
+        "fire_years":  20,    # no recent fire — old growth proxy
+        "vitality":    41.1,
+        "ndvi":        0.507,
+        "invasive":    0,     # None
+    },
+    {
+        "role":        "burned_recovering",
+        "label":       "Burned\nRecovering",
+        "fire_years":  3.5,
+        "vitality":    35.2,
+        "ndvi":        0.508,
+        "invasive":    1,     # Rare to Very Scattered
+    },
+    {
+        "role":        "invasive_disturbed",
+        "label":       "Invasive\nDisturbed",
+        "fire_years":  9.0,
+        "vitality":    31.1,
+        "ndvi":        0.677,
+        "invasive":    2,     # Scattered to Medium
+    },
+    {
+        "role":        "wet_dry_pair_complement",
+        "label":       "Wet/Dry\nPair",
+        "fire_years":  4.5,   # same class as burned, jittered
+        "vitality":    10.8,
+        "ndvi":        None,
+        "invasive":    0,
+    },
+]
+
+_DOT_COLORS = {
+    "healthy_baseline":        "#4CAF50",
+    "burned_recovering":       "#FF9800",
+    "invasive_disturbed":      "#c62828",
+    "wet_dry_pair_complement": "#78909C",
+}
+_INV_SIZE = {0: 180, 1: 380, 2: 700}
+_INV_LABEL = {0: "No invasives", 1: "Rare aliens", 2: "Scattered–Medium aliens"}
+
+
+def build_recovery_chart() -> plt.Figure:
+    fig, ax = plt.subplots(figsize=(7, 5))
+    fig.patch.set_facecolor("#f8f9fa")
+    ax.set_facecolor("#f8f9fa")
+
+    for d in RECOVERY_DATA:
+        ax.scatter(
+            d["fire_years"], d["vitality"],
+            s=_INV_SIZE[d["invasive"]],
+            color=_DOT_COLORS[d["role"]],
+            alpha=0.88, zorder=5,
+            edgecolors="white", linewidths=1.8,
+        )
+        offset = (-72, 8) if d["role"] == "invasive_disturbed" else (10, 6)
+        ax.annotate(
+            d["label"],
+            (d["fire_years"], d["vitality"]),
+            textcoords="offset points", xytext=offset,
+            fontsize=9.5, color="#333",
+        )
+        if d["ndvi"] is not None:
+            ax.annotate(
+                f"NDVI {d['ndvi']:.3f}",
+                (d["fire_years"], d["vitality"]),
+                textcoords="offset points", xytext=(offset[0], offset[1] - 13),
+                fontsize=8, color="#555",
+            )
+
+    # Expected recovery arrow (dashed trend)
+    ax.annotate(
+        "",
+        xy=(20, 41), xytext=(3.5, 35),
+        arrowprops=dict(arrowstyle="->", color="#aaa", lw=1.5, linestyle="dashed"),
+        zorder=2,
+    )
+    ax.text(11, 40.5, "expected\nrecovery →", fontsize=8, color="#aaa", style="italic")
+
+    # Invasion break annotation
+    ax.annotate(
+        "⚠  Invasion breaks\nrecovery trajectory",
+        xy=(9.0, 31.1), xytext=(13, 22),
+        fontsize=9, color="#c62828", fontweight="bold",
+        arrowprops=dict(arrowstyle="->", color="#c62828", lw=1.3),
+    )
+
+    ax.set_xlim(0, 25)
+    ax.set_ylim(0, 52)
+    ax.set_xticks([3.5, 9, 20])
+    ax.set_xticklabels(["1–6 yrs\npost-fire", "6–12 yrs\npost-fire", ">17 yrs\n(no recent fire)"], fontsize=9.5)
+    ax.set_ylabel("Bioacoustic Vitality (0–100)", fontsize=11)
+    ax.set_title("Recovery trajectory: fire age vs acoustic vitality\nBubble size = invasive species presence", fontsize=11, fontweight="bold", pad=10)
+    ax.grid(axis="y", linestyle="--", alpha=0.35, zorder=0)
+
+    # Legend for bubble size
+    for inv_level, label in _INV_LABEL.items():
+        ax.scatter([], [], s=_INV_SIZE[inv_level], color="#aaa", alpha=0.7, label=label)
+    ax.legend(fontsize=8.5, loc="upper left", title="Invasive species", title_fontsize=9)
+
+    plt.tight_layout()
+    return fig
+
+
+RECOVERY_EXPLANATION = """
+### Why does the Invasive Disturbed site have the worst outcome — despite the most recovery time?
+
+After a wildfire, native fynbos shrubland normally recovers over years to decades.
+The **Burned Recovering** site (1–6 years post-fire) shows low but improving vitality — this is expected early succession.
+The **Healthy Baseline** (no recent fire, >17 years) shows what full recovery looks like: vitality 41.1, no invasive species.
+
+The **Invasive Disturbed** site breaks this pattern. At 6–12 years post-fire, it should have *higher* vitality than the
+recovering site — it has had more time. Instead, vitality is lower (31.1).
+
+**Why?** Invasive woody species colonised the canopy during the post-fire recovery window.
+They are photosynthetically active — NDVI climbs to the highest value in the sample (0.677).
+But they suppress native fauna: fewer nesting sites, altered food webs, reduced insect diversity.
+The soundscape records the collapse that satellite greenness hides.
+
+> *"The forest looks recovered from space. It isn't."*
+"""
+
+
 # ── Main update ───────────────────────────────────────────────────────────────
 
 def update(choice: str):
@@ -204,6 +424,19 @@ with gr.Blocks(title="Forest Memory") as demo:
         )
 
     heading_out = gr.Markdown()
+
+    with gr.Row():
+        comparison_plot = gr.Plot(
+            value=build_comparison_chart(),
+            label="",
+            show_label=False,
+        )
+
+    with gr.Row(equal_height=True):
+        with gr.Column(scale=1):
+            gr.Plot(value=build_recovery_chart(), show_label=False)
+        with gr.Column(scale=1):
+            gr.Markdown(RECOVERY_EXPLANATION)
 
     with gr.Row(equal_height=False):
 
