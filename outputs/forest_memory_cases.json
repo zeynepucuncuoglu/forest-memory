@@ -1,1 +1,304 @@
-[{"role":"healthy_baseline","site_id":"s2lam027_231127","site_metadata":{"latitude":-33.247096,"longitude":18.19386,"land_cover_class":"Shrubland-Fynbos","fire_class":"No data or No Fire","field_veld_age":"Old (> 17 yrs)","field_aliens_within_20m":null,"elevation_class":"Low: 0-500 m","campaign":"Dry season","recording_num":2151,"aviris_coverage":"Y","lvis_coverage":"Y","pair_id":215},"audio":{"wav_file_count":3,"bioacoustic_vitality_score":{"mean":41.11,"min":26.95,"max":57.8},"acoustic_richness_score":{"mean":51.36,"min":46.61,"max":53.93},"bird_activity_proxy":{"mean":56.07,"min":48.68,"max":66.17},"insect_activity_proxy_score":{"mean":57.17,"min":30.63,"max":91.36},"human_disturbance_proxy":{"mean":27.75,"min":20.11,"max":35.78}},"ndvi":{"mean_ndvi":0.5071,"std_ndvi":0.0578,"min_ndvi":0.2564,"max_ndvi":0.7461,"image_count":39,"period_start":"2023-10-01","period_end":"2023-12-20"},"assets":{"rgb_tif":"data/bioscape/sattelite/healthy_baseline_rgb_2023_dry.tif","ndvi_tif":"data/bioscape/sattelite/healthy_baseline_ndvi_2023_dry.tif","audio_files":["data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-00.wav","data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-10.wav","data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-20.wav"]},"interpretation_flags":{"green_not_alive_signal":false,"spatially_variable_vegetation":false,"recent_fire_recovery_context":false,"acoustic_uncertainty":false},"proxy_disclaimer":"All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions."},{"role":"burned_recovering","site_id":"s2lam047_231107","site_metadata":{"latitude":-34.355985,"longitude":18.858381,"land_cover_class":"Shrubland-Fynbos","fire_class":"1-to-6 years","field_veld_age":"Young (burned, < 6 yrs)","field_aliens_within_20m":"Rare to Very Scattered","elevation_class":"Low: 0-500 m","campaign":"Dry season","recording_num":1121,"aviris_coverage":"Y","lvis_coverage":"N","pair_id":58},"audio":{"wav_file_count":3,"bioacoustic_vitality_score":{"mean":35.22,"min":33.12,"max":37.36},"acoustic_richness_score":{"mean":50.9,"min":48.83,"max":51.98},"bird_activity_proxy":{"mean":45.67,"min":42.53,"max":47.73},"insect_activity_proxy_score":{"mean":56.52,"min":47.85,"max":64.84},"human_disturbance_proxy":{"mean":30.54,"min":27.5,"max":33.09}},"ndvi":{"mean_ndvi":0.5077,"std_ndvi":0.1481,"min_ndvi":0.0869,"max_ndvi":0.8655,"image_count":30,"period_start":"2023-10-01","period_end":"2023-12-20"},"assets":{"rgb_tif":"data/bioscape/sattelite/burned_recovering_rgb_2023_dry.tif","ndvi_tif":"data/bioscape/sattelite/burned_recovering_ndvi_2023_dry.tif","audio_files":["data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-00.wav","data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-10.wav","data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-20.wav"]},"interpretation_flags":{"green_not_alive_signal":true,"spatially_variable_vegetation":true,"recent_fire_recovery_context":true,"acoustic_uncertainty":false},"proxy_disclaimer":"All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions."},{"role":"invasive_disturbed","site_id":"s2lam051_231030","site_metadata":{"latitude":-33.949391,"longitude":21.05756,"land_cover_class":"Forest-Woodland","fire_class":"6-to-12 years","field_veld_age":"Intermediate (6-17 yrs)","field_aliens_within_20m":"Scattered to Medium","elevation_class":"Low: 0-500 m","campaign":"Dry season","recording_num":1434,"aviris_coverage":"Y","lvis_coverage":"N","pair_id":97},"audio":{"wav_file_count":3,"bioacoustic_vitality_score":{"mean":31.07,"min":26.97,"max":38.32},"acoustic_richness_score":{"mean":50.31,"min":45.0,"max":53.9},"bird_activity_proxy":{"mean":49.42,"min":48.61,"max":50.42},"insect_activity_proxy_score":{"mean":26.21,"min":3.86,"max":65.5},"human_disturbance_proxy":{"mean":23.32,"min":19.86,"max":30.0}},"ndvi":{"mean_ndvi":0.6774,"std_ndvi":0.0933,"min_ndvi":0.1255,"max_ndvi":0.8864,"image_count":9,"period_start":"2023-10-01","period_end":"2023-12-20"},"assets":{"rgb_tif":"data/bioscape/sattelite/invasive_disturbed_rgb_2023_dry.tif","ndvi_tif":"data/bioscape/sattelite/invasive_disturbed_ndvi_2023_dry.tif","audio_files":["data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-00.wav","data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-10.wav","data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-20.wav"]},"interpretation_flags":{"green_not_alive_signal":true,"spatially_variable_vegetation":false,"recent_fire_recovery_context":false,"acoustic_uncertainty":false},"proxy_disclaimer":"All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions."},{"role":"wet_dry_pair_complement","site_id":"s2lam096_230823","site_metadata":{"latitude":-34.3561,"longitude":18.8584,"land_cover_class":"Shrubland-Fynbos","fire_class":"1-to-6 years","field_veld_age":null,"field_aliens_within_20m":null,"elevation_class":"Low: 0-500 m","campaign":"Wet season","recording_num":700,"aviris_coverage":"Y","lvis_coverage":"N","pair_id":58},"audio":{"wav_file_count":2,"bioacoustic_vitality_score":{"mean":10.82,"min":5.27,"max":16.38},"acoustic_richness_score":{"mean":54.99,"min":54.98,"max":55.0},"bird_activity_proxy":{"mean":44.45,"min":42.85,"max":46.04},"insect_activity_proxy_score":{"mean":25.86,"min":22.89,"max":28.82},"human_disturbance_proxy":{"mean":62.42,"min":54.36,"max":70.48}},"ndvi":null,"assets":{"rgb_tif":null,"ndvi_tif":null,"audio_files":["data/bioscape/audio/wet_dry/s2lam096_230823_2023-08-24_05-00.wav","data/bioscape/audio/wet_dry/s2lam096_230823_2023-08-24_05-10.wav"]},"interpretation_flags":{"green_not_alive_signal":false,"spatially_variable_vegetation":false,"recent_fire_recovery_context":true,"acoustic_uncertainty":true},"proxy_disclaimer":"All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions."}]
+[
+  {
+    "role": "healthy_baseline",
+    "site_id": "s2lam027_231127",
+    "site_metadata": {
+      "latitude": -33.247096,
+      "longitude": 18.19386,
+      "land_cover_class": "Shrubland-Fynbos",
+      "fire_class": "No data or No Fire",
+      "field_veld_age": "Old (> 17 yrs)",
+      "field_aliens_within_20m": null,
+      "elevation_class": "Low: 0-500 m",
+      "campaign": "Dry season",
+      "recording_num": 2151,
+      "aviris_coverage": "Y",
+      "lvis_coverage": "Y",
+      "pair_id": 215
+    },
+    "audio": {
+      "wav_file_count": 3,
+      "bioacoustic_vitality_score": {
+        "mean": 41.11,
+        "min": 26.95,
+        "max": 57.8
+      },
+      "acoustic_richness_score": {
+        "mean": 51.36,
+        "min": 46.61,
+        "max": 53.93
+      },
+      "bird_activity_proxy": {
+        "mean": 56.07,
+        "min": 48.68,
+        "max": 66.17
+      },
+      "insect_activity_proxy_score": {
+        "mean": 57.17,
+        "min": 30.63,
+        "max": 91.36
+      },
+      "human_disturbance_proxy": {
+        "mean": 27.75,
+        "min": 20.11,
+        "max": 35.78
+      }
+    },
+    "ndvi": {
+      "mean_ndvi": 0.5071,
+      "std_ndvi": 0.0578,
+      "min_ndvi": 0.2564,
+      "max_ndvi": 0.7461,
+      "image_count": 39,
+      "period_start": "2023-10-01",
+      "period_end": "2023-12-20"
+    },
+    "assets": {
+      "rgb_tif": "data/bioscape/sattelite/healthy_baseline_rgb_2023_dry.tif",
+      "ndvi_tif": "data/bioscape/sattelite/healthy_baseline_ndvi_2023_dry.tif",
+      "audio_files": [
+        "data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-00.wav",
+        "data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-10.wav",
+        "data/bioscape/audio/healthy/s2lam027_231127_2023-12-11_05-20.wav"
+      ]
+    },
+    "interpretation_flags": {
+      "green_not_alive_signal": false,
+      "spatially_variable_vegetation": false,
+      "recent_fire_recovery_context": false,
+      "acoustic_uncertainty": false
+    },
+    "proxy_disclaimer": "All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions.",
+    "litert_visual": {
+      "texture_energy": 3885.0,
+      "texture_spread": 1.9608,
+      "high_act_ratio": 0.015,
+      "top_logit_class": 577,
+      "model": "efficientnet_lite0_litert_feature_extractor",
+      "note": "EfficientNet-Lite0 used as offline texture feature extractor. ImageNet classes not meaningful for satellite imagery \u2014 a satellite-specific TFLite model is the next step."
+    }
+  },
+  {
+    "role": "burned_recovering",
+    "site_id": "s2lam047_231107",
+    "site_metadata": {
+      "latitude": -34.355985,
+      "longitude": 18.858381,
+      "land_cover_class": "Shrubland-Fynbos",
+      "fire_class": "1-to-6 years",
+      "field_veld_age": "Young (burned, < 6 yrs)",
+      "field_aliens_within_20m": "Rare to Very Scattered",
+      "elevation_class": "Low: 0-500 m",
+      "campaign": "Dry season",
+      "recording_num": 1121,
+      "aviris_coverage": "Y",
+      "lvis_coverage": "N",
+      "pair_id": 58
+    },
+    "audio": {
+      "wav_file_count": 3,
+      "bioacoustic_vitality_score": {
+        "mean": 35.22,
+        "min": 33.12,
+        "max": 37.36
+      },
+      "acoustic_richness_score": {
+        "mean": 50.9,
+        "min": 48.83,
+        "max": 51.98
+      },
+      "bird_activity_proxy": {
+        "mean": 45.67,
+        "min": 42.53,
+        "max": 47.73
+      },
+      "insect_activity_proxy_score": {
+        "mean": 56.52,
+        "min": 47.85,
+        "max": 64.84
+      },
+      "human_disturbance_proxy": {
+        "mean": 30.54,
+        "min": 27.5,
+        "max": 33.09
+      }
+    },
+    "ndvi": {
+      "mean_ndvi": 0.5077,
+      "std_ndvi": 0.1481,
+      "min_ndvi": 0.0869,
+      "max_ndvi": 0.8655,
+      "image_count": 30,
+      "period_start": "2023-10-01",
+      "period_end": "2023-12-20"
+    },
+    "assets": {
+      "rgb_tif": "data/bioscape/sattelite/burned_recovering_rgb_2023_dry.tif",
+      "ndvi_tif": "data/bioscape/sattelite/burned_recovering_ndvi_2023_dry.tif",
+      "audio_files": [
+        "data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-00.wav",
+        "data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-10.wav",
+        "data/bioscape/audio/recovering/s2lam047_231107_2023-11-08_05-20.wav"
+      ]
+    },
+    "interpretation_flags": {
+      "green_not_alive_signal": true,
+      "spatially_variable_vegetation": true,
+      "recent_fire_recovery_context": true,
+      "acoustic_uncertainty": false
+    },
+    "proxy_disclaimer": "All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions.",
+    "litert_visual": {
+      "texture_energy": 8609.0,
+      "texture_spread": 2.9258,
+      "high_act_ratio": 0.01,
+      "top_logit_class": 892,
+      "model": "efficientnet_lite0_litert_feature_extractor",
+      "note": "EfficientNet-Lite0 used as offline texture feature extractor. ImageNet classes not meaningful for satellite imagery \u2014 a satellite-specific TFLite model is the next step."
+    }
+  },
+  {
+    "role": "invasive_disturbed",
+    "site_id": "s2lam051_231030",
+    "site_metadata": {
+      "latitude": -33.949391,
+      "longitude": 21.05756,
+      "land_cover_class": "Forest-Woodland",
+      "fire_class": "6-to-12 years",
+      "field_veld_age": "Intermediate (6-17 yrs)",
+      "field_aliens_within_20m": "Scattered to Medium",
+      "elevation_class": "Low: 0-500 m",
+      "campaign": "Dry season",
+      "recording_num": 1434,
+      "aviris_coverage": "Y",
+      "lvis_coverage": "N",
+      "pair_id": 97
+    },
+    "audio": {
+      "wav_file_count": 3,
+      "bioacoustic_vitality_score": {
+        "mean": 31.07,
+        "min": 26.97,
+        "max": 38.32
+      },
+      "acoustic_richness_score": {
+        "mean": 50.31,
+        "min": 45.0,
+        "max": 53.9
+      },
+      "bird_activity_proxy": {
+        "mean": 49.42,
+        "min": 48.61,
+        "max": 50.42
+      },
+      "insect_activity_proxy_score": {
+        "mean": 26.21,
+        "min": 3.86,
+        "max": 65.5
+      },
+      "human_disturbance_proxy": {
+        "mean": 23.32,
+        "min": 19.86,
+        "max": 30.0
+      }
+    },
+    "ndvi": {
+      "mean_ndvi": 0.6774,
+      "std_ndvi": 0.0933,
+      "min_ndvi": 0.1255,
+      "max_ndvi": 0.8864,
+      "image_count": 9,
+      "period_start": "2023-10-01",
+      "period_end": "2023-12-20"
+    },
+    "assets": {
+      "rgb_tif": "data/bioscape/sattelite/invasive_disturbed_rgb_2023_dry.tif",
+      "ndvi_tif": "data/bioscape/sattelite/invasive_disturbed_ndvi_2023_dry.tif",
+      "audio_files": [
+        "data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-00.wav",
+        "data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-10.wav",
+        "data/bioscape/audio/disturbed/s2lam051_231030_2023-10-31_05-20.wav"
+      ]
+    },
+    "interpretation_flags": {
+      "green_not_alive_signal": true,
+      "spatially_variable_vegetation": false,
+      "recent_fire_recovery_context": false,
+      "acoustic_uncertainty": false
+    },
+    "proxy_disclaimer": "All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions.",
+    "litert_visual": {
+      "texture_energy": 842.0,
+      "texture_spread": 0.9021,
+      "high_act_ratio": 0.023,
+      "top_logit_class": 796,
+      "model": "efficientnet_lite0_litert_feature_extractor",
+      "note": "EfficientNet-Lite0 used as offline texture feature extractor. ImageNet classes not meaningful for satellite imagery \u2014 a satellite-specific TFLite model is the next step."
+    }
+  },
+  {
+    "role": "wet_dry_pair_complement",
+    "site_id": "s2lam096_230823",
+    "site_metadata": {
+      "latitude": -34.3561,
+      "longitude": 18.8584,
+      "land_cover_class": "Shrubland-Fynbos",
+      "fire_class": "1-to-6 years",
+      "field_veld_age": null,
+      "field_aliens_within_20m": null,
+      "elevation_class": "Low: 0-500 m",
+      "campaign": "Wet season",
+      "recording_num": 700,
+      "aviris_coverage": "Y",
+      "lvis_coverage": "N",
+      "pair_id": 58
+    },
+    "audio": {
+      "wav_file_count": 2,
+      "bioacoustic_vitality_score": {
+        "mean": 10.82,
+        "min": 5.27,
+        "max": 16.38
+      },
+      "acoustic_richness_score": {
+        "mean": 54.99,
+        "min": 54.98,
+        "max": 55.0
+      },
+      "bird_activity_proxy": {
+        "mean": 44.45,
+        "min": 42.85,
+        "max": 46.04
+      },
+      "insect_activity_proxy_score": {
+        "mean": 25.86,
+        "min": 22.89,
+        "max": 28.82
+      },
+      "human_disturbance_proxy": {
+        "mean": 62.42,
+        "min": 54.36,
+        "max": 70.48
+      }
+    },
+    "ndvi": null,
+    "assets": {
+      "rgb_tif": null,
+      "ndvi_tif": null,
+      "audio_files": [
+        "data/bioscape/audio/wet_dry/s2lam096_230823_2023-08-24_05-00.wav",
+        "data/bioscape/audio/wet_dry/s2lam096_230823_2023-08-24_05-10.wav"
+      ]
+    },
+    "interpretation_flags": {
+      "green_not_alive_signal": false,
+      "spatially_variable_vegetation": false,
+      "recent_fire_recovery_context": true,
+      "acoustic_uncertainty": true
+    },
+    "proxy_disclaimer": "All acoustic and NDVI values are proxy signals only. Do not interpret as confirmed species counts, validated biodiversity measurements, or wildfire predictions. Values are relative within this sample of sites and recording sessions.",
+    "litert_visual": {
+      "model": "not_available"
+    }
+  }
+]

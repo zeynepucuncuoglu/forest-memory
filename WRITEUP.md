@@ -106,10 +106,13 @@ Across 8 generated reports (4 sites × 2 pipelines), Gemma 4 consistently:
 - Flagged acoustic uncertainty from high human-noise proxy at the wet-season site
 - Applied proxy language throughout without over-claiming
 
-The key generated insight at the invasive-disturbed site:
-> *"NDVI may be reflecting invasive biomass rather than native forest health. A significant divergence exists between the high satellite-derived greenness and the low bioacoustic vitality — consistent with the green_not_alive_signal flag."*
+The key generated insight at the invasive-disturbed site (Gemma 4, Multimodal Tension section):
+> *"A significant divergence exists between the high satellite-derived greenness and the low bioacoustic vitality. This tension suggests that the vegetatively productive state indicated by the NDVI may not be supporting a proportional level of faunal activity. Such a gap is often associated with sites where invasive species dominate the biomass."*
 
-This is the sentence that matters. A satellite operator looking at NDVI 0.677 would classify this site as thriving. The multimodal system flags it as ecologically compromised.
+And from the Uncertainty Notes section:
+> *"NDVI may be reflecting invasive biomass rather than native forest health."*
+
+These are the sentences that matter. A satellite operator looking at NDVI 0.677 would classify this site as thriving. The multimodal system flags it as ecologically compromised — without being told to look for invasive species.
 
 ---
 
