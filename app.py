@@ -11,15 +11,20 @@ import gradio as gr
 # ── Load pre-computed data ─────────────────────────────────────────────────────
 ROOT = Path(__file__).parent
 
-CASES_PATH   = ROOT / "outputs" / "forest_memory_cases.json"
-REPORTS_PATH = ROOT / "outputs" / "gemma_reports" / "litert_multimodal_reports.json"
+CASES_PATH    = ROOT / "outputs" / "forest_memory_cases.json"
+LITERT_PATH   = ROOT / "outputs" / "gemma_reports" / "litert_multimodal_reports.json"
+GEMMA3_PATH   = ROOT / "outputs" / "gemma_reports" / "gemma_reports.json"
 
-with open(CASES_PATH)   as f: cases_raw   = json.load(f)
-with open(REPORTS_PATH) as f: reports_raw = json.load(f)
+with open(CASES_PATH)  as f: cases_raw    = json.load(f)
+with open(LITERT_PATH) as f: litert_raw   = json.load(f)
+with open(GEMMA3_PATH) as f: gemma3_raw   = json.load(f)
 
 # Index by role
-cases   = {c["role"]: c for c in cases_raw}
-reports = {r["role"]: r for r in reports_raw["reports"]}
+cases        = {c["role"]: c for c in cases_raw}
+litert_rpts  = {r["role"]: r for r in litert_raw["reports"]}
+gemma3_rpts  = {r["role"]: r for r in gemma3_raw["site_reports"]}
+synthesis_md = gemma3_raw["synthesis"].get("raw_response", "")
+synthesis_model = gemma3_raw["synthesis"].get("model", "Gemma 4")
 
 ROLE_LABELS = {
     "healthy_baseline":        "Healthy Baseline — s2lam027",
@@ -35,11 +40,11 @@ ROLE_ICONS = {
     "wet_dry_pair_complement": "💧",
 }
 
-ROLE_KEYS = list(ROLE_LABELS.keys())
+ROLE_KEYS        = list(ROLE_LABELS.keys())
 DROPDOWN_CHOICES = [ROLE_LABELS[r] for r in ROLE_KEYS]
 
 
-# ── Helper: build metrics markdown ────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _bar(value: float, max_val: float = 100, width: int = 20) -> str:
     filled = int(round(value / max_val * width))
@@ -50,21 +55,20 @@ def _score_row(label: str, value, max_val: float = 100) -> str:
     if value is None:
         return f"| {label} | — | *not available* |"
     pct = min(value / max_val * 100, 100)
-    bar = _bar(pct)
-    return f"| {label} | `{value:.1f}` | `{bar}` |"
+    return f"| {label} | `{value:.3f}` | `{_bar(pct)}` |"
 
+
+# ── Panel builders ────────────────────────────────────────────────────────────
 
 def build_metrics_md(role: str) -> str:
-    case   = cases.get(role, {})
-    audio  = case.get("audio", {})
-    ndvi   = case.get("ndvi") or {}
-    flags  = case.get("interpretation_flags", {})
-    meta   = case.get("site_metadata", {})
-    report = reports.get(role, {})
+    case  = cases.get(role, {})
+    audio = case.get("audio", {})
+    ndvi  = case.get("ndvi") or {}
+    flags = case.get("interpretation_flags", {})
+    meta  = case.get("site_metadata", {})
 
     lines = []
 
-    # ── Site metadata ──────────────────────────────────────────────────────────
     lines.append("### Site Metadata")
     lines.append(f"- **Site ID:** `{case.get('site_id', '—')}`")
     lines.append(f"- **Land Cover:** {meta.get('land_cover_class', '—')}")
@@ -74,17 +78,13 @@ def build_metrics_md(role: str) -> str:
     lines.append(f"- **WAV files analysed:** {audio.get('wav_file_count', 0)}")
     lines.append("")
 
-    # ── NDVI ──────────────────────────────────────────────────────────────────
     lines.append("### Vegetation Signal (Sentinel-2 NDVI)")
     lines.append("| Metric | Value | Visual |")
     lines.append("|--------|-------|--------|")
-    ndvi_mean = ndvi.get("mean_ndvi")
-    ndvi_std  = ndvi.get("std_ndvi")
-    lines.append(_score_row("NDVI mean", ndvi_mean, max_val=1.0))
-    lines.append(_score_row("NDVI std",  ndvi_std,  max_val=0.3))
+    lines.append(_score_row("NDVI mean", ndvi.get("mean_ndvi"), max_val=1.0))
+    lines.append(_score_row("NDVI std",  ndvi.get("std_ndvi"),  max_val=0.3))
     lines.append("")
 
-    # ── Acoustic scores ────────────────────────────────────────────────────────
     lines.append("### Acoustic Proxy Scores (FFT-based)")
     lines.append("| Signal | Value (/100) | Visual |")
     lines.append("|--------|-------------|--------|")
@@ -92,78 +92,93 @@ def build_metrics_md(role: str) -> str:
     def _get(col):
         return (audio.get(col) or {}).get("mean")
 
-    lines.append(_score_row("Bioacoustic Vitality",   _get("bioacoustic_vitality_score")))
-    lines.append(_score_row("Acoustic Richness",      _get("acoustic_richness_score")))
-    lines.append(_score_row("Bird Activity Proxy",    _get("bird_activity_proxy")))
-    lines.append(_score_row("Insect Activity Proxy",  _get("insect_activity_proxy_score")))
-    lines.append(_score_row("Human Disturbance Proxy", _get("human_disturbance_proxy")))
+    lines.append(_score_row("Bioacoustic Vitality",    _get("bioacoustic_vitality_score"), 100))
+    lines.append(_score_row("Acoustic Richness",       _get("acoustic_richness_score"),    100))
+    lines.append(_score_row("Bird Activity Proxy",     _get("bird_activity_proxy"),        100))
+    lines.append(_score_row("Insect Activity Proxy",   _get("insect_activity_proxy_score"),100))
+    lines.append(_score_row("Human Disturbance Proxy", _get("human_disturbance_proxy"),    100))
     lines.append("")
 
-    # ── YAMNet scores ──────────────────────────────────────────────────────────
-    yamnet = report.get("litert_yamnet", {})
-    if yamnet and "error" not in yamnet:
-        lines.append("### YAMNet Audio Scores (LiteRT inference)")
-        lines.append("| Class | Score (0–1) | Visual |")
-        lines.append("|-------|------------|--------|")
-        for key in ("bird_activity_score", "insect_activity_score",
-                    "rain_signal_score", "wind_signal_score",
-                    "human_noise_score", "silence_score"):
-            label = key.replace("_score", "").replace("_", " ").title()
-            lines.append(_score_row(label, yamnet.get(key), max_val=1.0))
-        lines.append("")
-
-    # ── Interpretation flags ───────────────────────────────────────────────────
     lines.append("### Interpretation Flags")
     flag_defs = {
-        "green_not_alive_signal":       ("🟢", "Green-not-alive signal",       "High NDVI but low bioacoustic vitality"),
-        "spatially_variable_vegetation":("🌿", "Spatially variable vegetation", "Patchy NDVI — mosaic landscape"),
-        "recent_fire_recovery_context": ("🔥", "Recent fire recovery context",  "1–6 year post-fire window"),
-        "acoustic_uncertainty":         ("⚠️",  "Acoustic uncertainty",          "High human-noise proxy — signals may be masked"),
+        "green_not_alive_signal":        ("🟢", "Green-not-alive",          "High NDVI but low bioacoustic vitality"),
+        "spatially_variable_vegetation": ("🌿", "Spatially variable veg.",  "Patchy NDVI — mosaic landscape"),
+        "recent_fire_recovery_context":  ("🔥", "Recent fire context",      "1–6 year post-fire window"),
+        "acoustic_uncertainty":          ("⚠️",  "Acoustic uncertainty",     "High human-noise proxy — signals may be masked"),
     }
     for k, (icon, name, desc) in flag_defs.items():
         active = flags.get(k, False)
         state  = "**ACTIVE**" if active else "inactive"
         lines.append(f"- {icon} **{name}**: {state} — *{desc}*")
+
     lines.append("")
     lines.append("---")
-    lines.append("*All values are proxy signals. Do not interpret as confirmed species counts "
-                 "or wildfire predictions. Values are relative within this site sample only.*")
+    lines.append("*All values are proxy signals. Not confirmed species counts or wildfire predictions.*")
 
     return "\n".join(lines)
 
 
-def build_report_md(role: str) -> str:
-    report = reports.get(role, {})
-    text   = report.get("report", "No report available.")
-    latency = report.get("latency_s")
-    model   = reports_raw.get("gemma_model", "Gemma 4")
-    audio_model = reports_raw.get("litert_audio_model", "YAMNet")
+def build_litert_report_md(role: str) -> str:
+    rpt     = litert_rpts.get(role, {})
+    text    = rpt.get("report", "No LiteRT report available.")
+    latency = rpt.get("latency_s")
+    model   = litert_raw.get("gemma_model", "Gemma 4")
+    audio_m = litert_raw.get("litert_audio_model", "YAMNet")
 
     header = (
-        f"*Generated by **{model}** | Audio: **{audio_model}** "
-        f"| Latency: **{latency:.1f} s***\n\n---\n\n"
+        f"*Model: **{model}** | Audio: **{audio_m}** | Latency: **{latency:.1f} s***\n\n---\n\n"
     ) if latency else ""
 
     return header + text
 
 
-# ── Main update function ───────────────────────────────────────────────────────
+def build_structured_report_md(role: str) -> str:
+    rpt      = gemma3_rpts.get(role, {})
+    sections = rpt.get("sections", {})
+    latency  = rpt.get("latency_s")
+    model    = rpt.get("model", "Gemma 4")
+
+    if not sections:
+        raw = rpt.get("raw_response", "No structured report available.")
+        return f"*Model: **{model}***\n\n---\n\n{raw}"
+
+    header = (
+        f"*Model: **{model}** | Latency: **{latency:.1f} s***\n\n---\n\n"
+    ) if latency else ""
+
+    lines = [header]
+    section_icons = {
+        "Vegetation Interpretation":   "🌿",
+        "Bioacoustic Interpretation":  "🔊",
+        "Multimodal Tension Summary":  "⚡",
+        "Recovery Interpretation":     "📈",
+        "Uncertainty Notes":           "⚠️",
+    }
+    for sec_name, text in sections.items():
+        icon = section_icons.get(sec_name, "•")
+        lines.append(f"### {icon} {sec_name}")
+        lines.append(text.strip())
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# ── Main update ───────────────────────────────────────────────────────────────
 
 def update(choice: str):
-    role = ROLE_KEYS[DROPDOWN_CHOICES.index(choice)]
-    icon = ROLE_ICONS[role]
+    role    = ROLE_KEYS[DROPDOWN_CHOICES.index(choice)]
+    icon    = ROLE_ICONS[role]
     heading = f"## {icon} {ROLE_LABELS[role]}"
     metrics = build_metrics_md(role)
-    report  = build_report_md(role)
-    return heading, metrics, report
+    litert  = build_litert_report_md(role)
+    struct  = build_structured_report_md(role)
+    return heading, metrics, litert, struct
 
 
 # ── Gradio UI ─────────────────────────────────────────────────────────────────
 
 CSS = """
-#heading { font-size: 1.3em; font-weight: bold; margin-bottom: 4px; }
-#tagline  { color: #555; font-style: italic; margin-bottom: 12px; }
-.panel-label { font-weight: 600; margin-bottom: 4px; color: #333; }
+.panel-label { font-weight: 600; margin-bottom: 4px; }
 """
 
 with gr.Blocks(title="Forest Memory") as demo:
@@ -173,6 +188,7 @@ with gr.Blocks(title="Forest Memory") as demo:
 # 🌲 Forest Memory
 ### Multimodal Ecological Resilience Reasoning
 **LiteRT (YAMNet)** acoustic sensing + **Gemma 4** ecological reasoning
+
 *"Green does not always mean ecologically healthy."*
 
 ---
@@ -187,33 +203,37 @@ with gr.Blocks(title="Forest Memory") as demo:
             scale=2,
         )
 
-    heading_out = gr.Markdown(elem_id="heading")
+    heading_out = gr.Markdown()
 
     with gr.Row(equal_height=False):
+
         with gr.Column(scale=1):
-            gr.Markdown("**Sensor Signals & Flags**", elem_classes="panel-label")
+            gr.Markdown("**Sensor Signals & Flags**")
             metrics_out = gr.Markdown()
 
         with gr.Column(scale=1):
-            gr.Markdown("**Gemma 4 Ecological Reasoning**", elem_classes="panel-label")
-            report_out = gr.Markdown()
+            gr.Markdown("**Gemma 4 Ecological Reasoning**")
+            with gr.Tabs():
+                with gr.Tab("LiteRT Pipeline Report"):
+                    litert_out = gr.Markdown()
+                with gr.Tab("Structured Analysis (5 sections)"):
+                    struct_out = gr.Markdown()
+
+    with gr.Accordion("Cross-Site Synthesis (all 4 sites)", open=False):
+        gr.Markdown(f"*{synthesis_model}*\n\n---\n\n{synthesis_md}")
 
     gr.Markdown(
         """
 ---
 **Data sources:** BioSCape BioSoundSCape Acoustic Recordings · Sentinel-2 SR Harmonized (Google Earth Engine)
-**Models:** YAMNet (AudioSet, 521 classes) via LiteRT · Gemma 4 via Google AI Studio API
+**Models:** YAMNet (AudioSet, 521 classes) via LiteRT · Gemma 4 (`gemma-4-31b-it`) via Google AI Studio API
 **Disclaimer:** All acoustic and spectral values are proxy signals only. Not validated biodiversity metrics.
         """
     )
 
-    # Wire up events
-    dropdown.change(fn=update, inputs=dropdown,
-                    outputs=[heading_out, metrics_out, report_out])
-
-    # Initial render
-    demo.load(fn=lambda: update(DROPDOWN_CHOICES[0]),
-              outputs=[heading_out, metrics_out, report_out])
+    outputs = [heading_out, metrics_out, litert_out, struct_out]
+    dropdown.change(fn=update, inputs=dropdown, outputs=outputs)
+    demo.load(fn=lambda: update(DROPDOWN_CHOICES[0]), outputs=outputs)
 
 if __name__ == "__main__":
     demo.launch(css=CSS, theme=gr.themes.Soft())
