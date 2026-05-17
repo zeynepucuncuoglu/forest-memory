@@ -60,8 +60,8 @@ HOW_IT_WORKS_HTML = """
     <div style="font-size:0.88em; color:#ccd6e0; line-height:1.55;">
       YAMNet (3 MB TFLite) classifies 521 sound categories from field recordings —
       bird calls, insect stridulation, wind, rain, human noise.<br><br>
-      Runs <strong style="color:#fff;">fully offline</strong> on a Raspberry Pi via LiteRT.
-      No internet. No API. No cloud.
+      Runs <strong style="color:#fff;">fully offline on CPU</strong> via LiteRT —
+      no GPU, no internet, no cloud. Works on a Raspberry Pi.
     </div>
   </div>
 
@@ -72,10 +72,10 @@ HOW_IT_WORKS_HTML = """
     <div style="font-size:2em; margin-bottom:6px;">🛰️</div>
     <div style="font-weight:700; font-size:1em; margin-bottom:6px; color:#a5d6a7;">LOOK — Satellite Eye</div>
     <div style="font-size:0.88em; color:#ccd6e0; line-height:1.55;">
-      Sentinel-2 imagery computes <strong style="color:#fff;">NDVI</strong> — a greenness index
-      based on photosynthetic activity.<br><br>
-      Powerful but limited: NDVI measures whether plants are green,
-      not whether the <em>ecosystem</em> is functioning.
+      EfficientNet-Lite0 (5 MB TFLite) analyses satellite RGB imagery as a
+      visual texture feature extractor — also <strong style="color:#fff;">fully offline on CPU</strong>.<br><br>
+      NDVI (Sentinel-2) adds the greenness signal.
+      Together: offline visual sensing under 10 MB total.
     </div>
   </div>
 
@@ -724,7 +724,8 @@ Full validation requires the complete BioSCape dataset (50+ sites).*
     gr.Markdown("""
 ---
 **Data:** BioSCape BioSoundSCape Acoustic Recordings · Sentinel-2 SR Harmonized (Google Earth Engine)
-**Models:** YAMNet (AudioSet 521 classes) via LiteRT · Gemma 4 (`gemma-4-26b-a4b-it` / `gemma-4-31b-it`) via Google AI Studio
+**Sensing (offline, CPU):** YAMNet 3 MB · EfficientNet-Lite0 5 MB — both via LiteRT, no GPU required
+**Reasoning:** Gemma 4 (`gemma-4-26b-a4b-it` / `gemma-4-31b-it`) via Google AI Studio API
 **Disclaimer:** All acoustic and spectral values are proxy signals only. Not validated biodiversity metrics.
 *Built for the Kaggle Gemma 4 Good Hackathon — Global Resilience + LiteRT tracks.*
     """)

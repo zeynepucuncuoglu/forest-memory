@@ -89,12 +89,15 @@ Critically, acoustic richness showed **no correlation** (ρ = −0.20), confirmi
 
 The forests that need monitoring most are the ones furthest from data infrastructure. A field ranger in rural Turkey, the Congo Basin, or remote Borneo does not have reliable cloud connectivity. Conservation NGOs in low-income countries cannot afford continuous API costs.
 
-LiteRT makes the sensing layer genuinely deployable:
-- YAMNet: 3MB TFLite, runs on a Raspberry Pi or Android phone
-- No internet required for audio classification
-- Battery-powered recorder + LiteRT device = a complete edge sensor
+**The sensing layer runs fully offline on CPU — no GPU required.**
 
-The current deployment uses Gemma 4 via API for the reasoning layer. On-device Gemma (E2B/E4B LiteRT) is the next step — the architecture is designed for it, and the notebook includes the LiteRT offline inference path. This brings the full reasoning capability offline, making the tool viable in environments with no connectivity at all.
+- **YAMNet (3 MB TFLite):** classifies 521 AudioSet sound categories from WAV recordings. Runs on a Raspberry Pi CPU in real time.
+- **EfficientNet-Lite0 (5 MB TFLite):** analyses satellite RGB imagery as a texture feature extractor. Also runs on CPU — no GPU, no internet, no cloud.
+- Both models run via `ai_edge_litert`. Total model footprint: under 10 MB.
+
+This matters because LiteRT models are designed for edge deployment. The same code that runs on a developer's laptop runs identically on a $35 Raspberry Pi in the middle of a forest. A battery-powered passive recorder plus a Raspberry Pi plus these two LiteRT models equals a complete, self-contained ecological sensor — total hardware cost under $100.
+
+The reasoning layer currently uses Gemma 4 via API. This is an honest limitation: a field ranger can collect acoustic and visual data offline, then upload it for reasoning when connectivity is available (monthly resupply runs, satellite uplink). On-device Gemma 4 E2B/E4B via LiteRT is the next step — the architecture is designed for it.
 
 ---
 

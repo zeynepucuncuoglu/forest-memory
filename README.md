@@ -59,9 +59,11 @@ All signals → Gemma 4 → Ecological resilience report
 The forests that need monitoring most are the ones furthest from data infrastructure. Field rangers in rural Turkey, the Amazon, or remote Borneo don't have reliable cloud access. Conservation NGOs in low-income countries can't afford continuous API costs.
 
 This tool is designed to work where it's needed:
-- Sensing layer: fully offline via LiteRT
-- On-device Gemma (E2B/E4B) = fully offline reasoning (next step)
-- Total hardware cost: under $100
+- **Sensing layer: fully offline via LiteRT — CPU only, no GPU required**
+  - YAMNet (3 MB): acoustic classification on Raspberry Pi
+  - EfficientNet-Lite0 (5 MB): visual texture analysis, same hardware
+- Reasoning: Gemma 4 via API (on-device Gemma E2B/E4B = next step)
+- Total hardware cost for sensing: under $100
 
 ---
 
