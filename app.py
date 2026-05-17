@@ -492,6 +492,21 @@ def build_metrics_md(role: str) -> str:
     lines.append("> It does **not** measure ecological function or biodiversity.")
     lines.append("")
 
+    # LiteRT visual sensing
+    lv = case.get("litert_visual", {})
+    lv_model = lv.get("model", "not_available")
+    lines.append("### LiteRT Eye — EfficientNet-Lite0 Visual Sensing")
+    if lv_model == "efficientnet_lite0_litert_feature_extractor":
+        lines.append(f"- **Texture Energy:** `{lv.get('texture_energy', '—')}` — higher = more complex visual texture")
+        lines.append(f"- **Texture Spread:** `{lv.get('texture_spread', '—')}` — std of logit activations")
+        lines.append(f"- **High Activation Ratio:** `{lv.get('high_act_ratio', '—')}` — fraction of strongly activated features")
+        lines.append("> *Raw EfficientNet-Lite0 logit features — used as texture proxy, not ImageNet class labels. Runs fully offline on CPU via LiteRT.*")
+    elif lv_model == "not_available":
+        lines.append("*Not available — no satellite RGB TIF for this site.*")
+    else:
+        lines.append(f"*Model: {lv_model}*")
+    lines.append("")
+
     lines.append("### Interpretation Flags")
     flag_defs = {
         "green_not_alive_signal":        ("🟢", "Green-not-alive",
@@ -519,9 +534,10 @@ def build_litert_report_md(role: str) -> str:
     text    = rpt.get("report", "No LiteRT report available.")
     latency = rpt.get("latency_s")
     model   = litert_raw.get("gemma_model", "Gemma 4")
-    audio_m = litert_raw.get("litert_audio_model", "YAMNet")
-    header  = (f"*Model: **{model}** | Audio: **{audio_m}** | Latency: **{latency:.1f} s***\n\n---\n\n"
-               if latency else "")
+    audio_m  = litert_raw.get("litert_audio_model", "YAMNet")
+    visual_m = litert_raw.get("litert_visual_model", "EfficientNet-Lite0")
+    header   = (f"*Model: **{model}** | Ear: **{audio_m}** | Eye: **{visual_m}** | Latency: **{latency:.1f} s***\n\n---\n\n"
+                if latency else "")
     return header + text
 
 
@@ -634,8 +650,8 @@ with gr.Blocks(title="Forest Memory") as demo:
     # ── Header ────────────────────────────────────────────────────────────────
     gr.Markdown("""
 # 🌲 Forest Memory
-### Multimodal Ecological Resilience Reasoning with LiteRT + Gemma 4
-*Can we detect ecological collapse before it's visible from space?*
+### Continuous Forest Health Monitoring with LiteRT + Gemma 4
+*Can we detect ecological stress — from fire, invasion, or drought — before it's visible from space?*
 
 ---
     """)

@@ -57,7 +57,7 @@ All signals ──→ Gemma 4 ──→ ecological resilience report
 
 **YAMNet (the ear):** Google's AudioSet classifier runs via `ai_edge_litert` — fully local, no cloud dependency. WAV recordings are split into 0.96-second patches, each classified across 521 AudioSet classes. We aggregate into ecological categories: bird activity, insect activity, rain, wind, human noise. These are proxy signals — not species detections — and are presented as such throughout.
 
-**Satellite analysis (the eye):** Sentinel-2 NDVI was computed via Google Earth Engine (500m buffer, dry season 2023 composites). RGB pixel statistics provide additional texture signals.
+**EfficientNet-Lite0 (the eye):** A 5 MB TFLite model runs on the same Raspberry Pi CPU — also fully offline via `ai_edge_litert`. Used as a texture feature extractor on satellite RGB GeoTIFFs: raw logit activations encode visual texture patterns (texture energy, spread, high-activation ratio) without relying on ImageNet class labels, which are not meaningful for aerial imagery. Sentinel-2 NDVI, computed via Google Earth Engine, provides the greenness signal.
 
 ### 3.2 Gemma 4 Reasoning Layer
 
@@ -123,13 +123,26 @@ These are the sentences that matter. A satellite operator looking at NDVI 0.677 
 
 **Immediate next steps:**
 - Validate against full BioSCape dataset (50+ sites) for statistical power
-- Add MobileNet TFLite as on-device visual classifier (completing the LiteRT eye)
 - Deploy Gemma 4 E2B/E4B LiteRT for fully offline reasoning
+- Pilot in Turkish forests with locally collected acoustic data
+
+**Real-time alert mode — same hardware, different firmware:**
+
+The current system operates in batch mode: sensors collect data offline, then upload when connectivity is available. But the same $100 hardware stack supports a fundamentally different operating mode: real-time ecological alerts.
+
+YAMNet already classifies crackling, fire, and acoustic silence in its 521-class vocabulary. A fire-tuned EfficientDet-Lite (4 MB TFLite) can detect smoke and flame in camera images. Running both models continuously on a Raspberry Pi Zero 2W, a node could detect a potential fire event in seconds — then wake a dormant LTE or LoRaWAN radio to send a small alert packet.
+
+The key insight is **sleep-and-wake architecture**: the device draws minimal power in standby, runs inference locally at all times, and only uses the radio when an anomaly is confirmed. A single LoRaWAN gateway covers 15 km of forest — dozens of sensor nodes without individual SIM cards. Monthly connectivity cost per node: under $3.
+
+This is not a feature of the current prototype. It is the logical next deployment mode for the same LiteRT sensing architecture — applied to a different time horizon. Forest Memory as built answers the question: *is this forest healthy over months?* The alert mode answers: *is something wrong right now?*
 
 **The larger vision:**
-Turkey loses forests to wildfire every summer. The infrastructure to detect early stress — unusual acoustic silence, shifts in bird activity proxies, NDVI divergence from acoustic signals — does not exist in Turkish forests yet. Forest Memory is designed to be cheap enough to deploy anywhere: a passive recorder costs under $100, satellite imagery is free via Earth Engine, LiteRT models are free and run on consumer hardware.
 
-The prototype works. The data was borrowed from South Africa because that's where the monitoring infrastructure exists. The goal is to bring this capability to the forests that have never been listened to.
+Forest Memory isn't just a wildfire tool. It is a continuous ecological health monitor — for any forest, any threat, anywhere it is needed. Wildfire is one disturbance. Invasive colonization, drought, overgrazing, and disease all degrade a soundscape before they become visible from space.
+
+Turkey loses forests every summer. The infrastructure to listen to them does not exist yet. Forest Memory is designed to be cheap enough to deploy anywhere: a passive recorder under $100, satellite imagery free via Earth Engine, LiteRT models free and running on consumer hardware.
+
+The prototype works. The data was borrowed from South Africa because that is where the monitoring infrastructure exists. The goal is to bring this capability to the forests that have never been listened to.
 
 ---
 
