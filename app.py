@@ -681,7 +681,7 @@ with gr.Blocks(title="Forest Memory") as demo:
     with gr.Row():
         dropdown = gr.Dropdown(
             choices=DROPDOWN_CHOICES,
-            value=DROPDOWN_CHOICES[0],
+            value=ROLE_LABELS["invasive_disturbed"],
             label="Select monitoring site",
             scale=2,
         )
@@ -708,7 +708,7 @@ with gr.Blocks(title="Forest Memory") as demo:
     with gr.Accordion("Cross-Site Synthesis (Gemma 4, all 4 sites)", open=False):
         gr.Markdown(f"*{synthesis_model}*\n\n---\n\n{synthesis_md}")
 
-    with gr.Accordion("Validation — Do Acoustic Scores Match Expert Classifications?", open=False):
+    with gr.Accordion("Validation — Do Acoustic Scores Match Expert Classifications?", open=True):
         gr.Markdown("""
 ### BioSCape Expert Ground Truth vs. Acoustic Proxy Scores
 
@@ -749,7 +749,7 @@ Full validation requires the complete BioSCape dataset (50+ sites).*
     # ── Event wiring ──────────────────────────────────────────────────────────
     outputs = [heading_out, diagnosis_out, acoustic_out, metrics_out, litert_out, struct_out]
     dropdown.change(fn=update, inputs=dropdown, outputs=outputs)
-    demo.load(fn=lambda: update(DROPDOWN_CHOICES[0]), outputs=outputs)
+    demo.load(fn=lambda: update(ROLE_LABELS["invasive_disturbed"]), outputs=outputs)
 
 if __name__ == "__main__":
     demo.launch(css=CSS, theme=gr.themes.Soft())
