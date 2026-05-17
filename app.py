@@ -222,6 +222,39 @@ with gr.Blocks(title="Forest Memory") as demo:
     with gr.Accordion("Cross-Site Synthesis (all 4 sites)", open=False):
         gr.Markdown(f"*{synthesis_model}*\n\n---\n\n{synthesis_md}")
 
+    with gr.Accordion("Validation — Do Acoustic Scores Match Expert Classifications?", open=False):
+        gr.Markdown("""
+### BioSCape Expert Ground Truth vs. Acoustic Proxy Scores
+
+The BioSCape ecology team's site classifications (fire class + veld age + invasive species presence)
+provide an independent ground-truth ranking of ecological health. Here we compare that ranking
+against our acoustic proxy scores and satellite NDVI.
+
+| Site | Expert Rank | Bioacoustic Vitality | NDVI |
+|------|:-----------:|:--------------------:|:----:|
+| Healthy Baseline (s2lam027) | 4 — best | 41.1 ✅ | 0.507 |
+| Burned Recovering (s2lam047) | 3 | 35.2 ✅ | 0.508 |
+| **Invasive Disturbed (s2lam051)** | **2 — degraded** | **31.1** 🔴 | **0.677** 🟢 highest |
+| Wet/Dry Pair (s2lam096) | 1 — poorest | 10.8 ✅ | — |
+
+**Bioacoustic vitality scores show perfect rank-order agreement with expert ecological classifications
+(Spearman ρ = 1.00, n = 4).**
+
+NDVI alone would rank the invasive-disturbed site as the *healthiest* — the exact opposite of the
+expert assessment. Acoustic AI surfaces the stress that satellite greenness hides.
+
+---
+
+**Acoustic richness** showed no correlation with ecological state (ρ = −0.20), confirming that
+soundscape *complexity* alone is not a reliable health indicator. A site can have a rich soundscape
+due to wind, rain, or human noise while remaining biologically impoverished.
+
+---
+
+⚠️ *Limitation: n = 4 sites precludes statistical significance. This is directional evidence only.
+Full validation against the complete BioSCape survey (50+ sites) is needed.*
+        """)
+
     gr.Markdown(
         """
 ---
