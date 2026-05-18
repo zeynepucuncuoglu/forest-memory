@@ -83,15 +83,9 @@ Critically, acoustic richness showed **no correlation** (ρ = −0.20), confirmi
 
 ## 5. Why LiteRT Matters for This Problem
 
-The forests that need monitoring most are the ones furthest from data infrastructure. A field ranger in rural Turkey, the Congo Basin, or remote Borneo does not have reliable cloud connectivity. Conservation NGOs in low-income countries cannot afford continuous API costs.
+The forests that need monitoring most are furthest from data infrastructure — field rangers in rural Turkey or remote Borneo have no reliable cloud, and conservation NGOs cannot afford continuous API costs.
 
-**The sensing layer runs fully offline on CPU — no GPU required.**
-
-- **YAMNet (3 MB TFLite):** classifies 521 AudioSet sound categories from WAV recordings. Runs on a Raspberry Pi CPU in real time.
-- **EfficientNet-Lite0 (5 MB TFLite):** analyses satellite RGB imagery as a texture feature extractor. Also runs on CPU — no GPU, no internet, no cloud.
-- Both models run via `ai_edge_litert`. Total model footprint: under 10 MB.
-
-The same code that runs on a developer's laptop runs identically on a $35 Raspberry Pi in a forest. A passive recorder, a Raspberry Pi, and these two LiteRT models equal a complete ecological sensor — total hardware cost under $100.
+**The sensing layer runs fully offline on CPU — no GPU required.** YAMNet (3 MB) and EfficientNet-Lite0 (5 MB) both run via `ai_edge_litert`, total footprint under 10 MB. A passive recorder, a Raspberry Pi, and these two LiteRT models equal a complete ecological sensor — total hardware cost under $100.
 
 The reasoning layer currently uses Gemma 4 via API. A field ranger collects data offline, uploads when connectivity is available. On-device Gemma 4 E2B/E4B via LiteRT is the next step.
 
@@ -113,9 +107,9 @@ A satellite operator looking at NDVI 0.677 would classify this site as thriving.
 - Validate against full BioSCape dataset (50+ sites) for statistical power
 - Deploy Gemma 4 E2B/E4B via LiteRT for fully offline reasoning
 - Pilot in Turkish forests with locally collected acoustic data
-- Real-time alert mode: same $100 hardware, sleep-and-wake LoRaWAN radio, YAMNet anomaly detection triggers instant alert — batch monitoring becomes real-time early warning on the same device
+- Real-time alert mode: YAMNet anomaly detection + LoRaWAN radio on the same $100 hardware — batch monitoring becomes real-time early warning
 
-Forest Memory is a continuous ecological health monitor — for any forest, any threat. Wildfire is one disturbance. Invasive colonization, drought, and disease all degrade a soundscape before they become visible from space. Turkey loses forests every summer. The infrastructure to listen to them does not exist yet.
+Turkey loses forests every summer. The infrastructure to listen to them does not exist yet.
 
 ---
 
