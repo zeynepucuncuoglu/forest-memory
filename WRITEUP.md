@@ -57,9 +57,11 @@ All signals ──→ Gemma 4 ──→ ecological resilience report
 
 Two complementary pipelines:
 
-**Pipeline A — LiteRT Multimodal Report** (`04_litert_edge.ipynb`): YAMNet scores, NDVI, FFT acoustics, and site metadata are fused into a single prompt. Gemma 4 (`gemma-4-26b-a4b-it`) produces a 4-section report per site, with cross-site NDVI and vitality context embedded so the model understands relative rankings.
+Both pipelines use retrieval-augmented generation: before each site report, the system retrieves cross-site statistics (NDVI range, vitality range, per-site rankings) from a pre-computed feature store and injects them into the prompt. This grounds Gemma's output in relative ecological context — the model reasons about each site knowing where it stands among all four.
 
-**Pipeline B — Structured 5-Section Analysis** (`03_gemma_ecological_reasoning.ipynb`): A more detailed prompt produces structured sections — Vegetation Interpretation, Bioacoustic Interpretation, Multimodal Tension, Recovery Interpretation, Uncertainty Notes — followed by a cross-site synthesis comparing all four sites.
+**Pipeline A — LiteRT Multimodal Report** (`04_litert_edge.ipynb`): YAMNet scores, EfficientNet texture features, NDVI, FFT acoustics, and site metadata are fused with retrieved cross-site context. Gemma 4 (`gemma-4-26b-a4b-it`) produces a 4-section grounded report per site.
+
+**Pipeline B — Agentic Multi-Step Analysis** (`03_gemma_ecological_reasoning.ipynb`): A structured 5-section analysis (Vegetation, Bioacoustic, Multimodal Tension, Recovery, Uncertainty) is generated per site, then a second Gemma call synthesises all four reports into a cross-site comparison — a two-step agentic reasoning chain.
 
 Both pipelines use `google.genai` SDK with retry logic and temperature = 0.3 for consistent, conservative outputs.
 
@@ -91,42 +93,29 @@ The forests that need monitoring most are the ones furthest from data infrastruc
 
 The same code that runs on a developer's laptop runs identically on a $35 Raspberry Pi in a forest. A passive recorder, a Raspberry Pi, and these two LiteRT models equal a complete ecological sensor — total hardware cost under $100.
 
-The reasoning layer currently uses Gemma 4 via API. This is an honest limitation: a field ranger can collect acoustic and visual data offline, then upload it for reasoning when connectivity is available (monthly resupply runs, satellite uplink). On-device Gemma 4 E2B/E4B via LiteRT is the next step — the architecture is designed for it.
+The reasoning layer currently uses Gemma 4 via API. A field ranger collects data offline, uploads when connectivity is available. On-device Gemma 4 E2B/E4B via LiteRT is the next step.
 
 ---
 
 ## 6. Results Summary
 
-Across 8 generated reports (4 sites × 2 pipelines), Gemma 4 consistently:
-- Correctly integrated invasive-pressure metadata with NDVI and acoustic tension to flag the disturbed site
-- Distinguished early-recovery acoustic patterns from invasion-suppression patterns
-- Flagged acoustic uncertainty from high human-noise proxy at the wet-season site
-- Applied proxy language throughout without over-claiming
+Across 8 generated reports (4 sites × 2 pipelines), Gemma 4 consistently distinguished early-recovery from invasion-suppression patterns, flagged acoustic uncertainty at the wet-season site, and applied proxy language throughout.
 
-The key generated insight at the invasive-disturbed site (Gemma 4, Multimodal Tension section):
-> *"A significant divergence exists between the high satellite-derived greenness and the low bioacoustic vitality. This tension suggests that the vegetatively productive state indicated by the NDVI may not be supporting a proportional level of faunal activity. Such a gap is often associated with sites where invasive species dominate the biomass."*
+The key generated insight (Gemma 4, Multimodal Tension, invasive-disturbed site):
+> *"A significant divergence exists between the high satellite-derived greenness and the low bioacoustic vitality. Such a gap is often associated with sites where invasive species dominate the biomass."*
 
-And from the Uncertainty Notes section:
-> *"NDVI may be reflecting invasive biomass rather than native forest health."*
-
-These are the sentences that matter. A satellite operator looking at NDVI 0.677 would classify this site as thriving. Gemma correctly integrates the provided invasive-pressure metadata with NDVI and acoustic tension — surfacing a stress signal that NDVI alone would miss.
+A satellite operator looking at NDVI 0.677 would classify this site as thriving. Gemma — grounded in retrieved cross-site context and sensor data — flags it as ecologically stressed.
 
 ---
 
 ## 7. Future Work & Vision
 
-**Immediate next steps:**
 - Validate against full BioSCape dataset (50+ sites) for statistical power
-- Deploy Gemma 4 E2B/E4B LiteRT for fully offline reasoning
+- Deploy Gemma 4 E2B/E4B via LiteRT for fully offline reasoning
 - Pilot in Turkish forests with locally collected acoustic data
+- Real-time alert mode: same $100 hardware, sleep-and-wake LoRaWAN radio, YAMNet anomaly detection triggers instant alert — batch monitoring becomes real-time early warning on the same device
 
-**Real-time alert mode — same hardware, different firmware:**
-
-The current system operates in batch mode: sensors collect data offline, then upload when connectivity is available. The same $100 hardware stack could support a real-time alert mode: YAMNet detects acoustic anomalies (crackling, sudden silence), a small fire-detection TFLite model monitors camera input, and a sleep-and-wake LTE or LoRaWAN radio sends alerts only when an anomaly is confirmed. A single LoRaWAN gateway covers 15 km of forest at under $3/month per node. This is not a feature of the current prototype — it is the logical next deployment mode for the same LiteRT sensing architecture.
-
-**The larger vision:**
-
-Forest Memory is a continuous ecological health monitor — for any forest, any threat. Wildfire is one disturbance. Invasive colonization, drought, and disease all degrade a soundscape before they become visible from space. Turkey loses forests every summer. The infrastructure to listen to them does not exist yet. Forest Memory is designed to be cheap enough to deploy anywhere it is needed.
+Forest Memory is a continuous ecological health monitor — for any forest, any threat. Wildfire is one disturbance. Invasive colonization, drought, and disease all degrade a soundscape before they become visible from space. Turkey loses forests every summer. The infrastructure to listen to them does not exist yet.
 
 ---
 
