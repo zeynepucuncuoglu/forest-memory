@@ -142,3 +142,24 @@ YAMNet: auto-downloaded on first run (~3MB)
 pip install -r requirements.txt
 python app.py  # → http://localhost:7860
 ```
+
+---
+
+## 9. References & Data Sources
+
+**Dataset**
+- BioSCape / BioSoundSCape — Biodiversity Survey of the Cape, South Africa. Passive acoustic monitoring campaign, Western Cape. [bioscape.io](https://www.bioscape.io)
+
+**Models**
+- YAMNet — Google AudioSet audio classifier. TensorFlow Hub. [tfhub.dev/google/yamnet/1](https://tfhub.dev/google/yamnet/1)
+- EfficientNet-Lite0 — TensorFlow Lite image model, used as texture feature extractor. [tfhub.dev/tensorflow/lite-model/efficientnet/lite0/uint8/2](https://tfhub.dev/tensorflow/lite-model/efficientnet/lite0/uint8/2)
+- Gemma 4 — Google DeepMind. Accessed via Google AI Studio API (`gemma-4-26b-a4b-it`, `gemma-4-31b-it`).
+- LiteRT (`ai_edge_litert`) — Google edge inference runtime. [ai.google.dev/edge/litert](https://ai.google.dev/edge/litert)
+
+**Satellite Data**
+- Sentinel-2 Surface Reflectance — European Space Agency / Copernicus. Accessed via Google Earth Engine.
+- Gorelick, N., et al. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. *Remote Sensing of Environment*, 202, 18–27.
+
+**Acoustic Methods**
+- Gemmeke, J. F., et al. (2017). Audio Set: An ontology and human-labeled dataset for audio events. *ICASSP 2017*.
+- Bioacoustic vitality proxy derived from FFT spectral features (spectral centroid, flatness, high-frequency energy ratio).
