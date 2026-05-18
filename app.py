@@ -710,10 +710,11 @@ with gr.Blocks(title="Forest Memory") as demo:
 
     with gr.Accordion("Validation — Do Acoustic Scores Match Expert Classifications?", open=True):
         gr.Markdown("""
-### BioSCape Expert Ground Truth vs. Acoustic Proxy Scores
+### Validation — Acoustic Scores vs. Metadata-Derived Ecological Ordering
 
-The BioSCape ecology team's site classifications — fire history, vegetation age,
-invasive species presence — provide an independent ecological health ranking.
+Bioacoustic vitality scores are compared against a metadata-derived ecological
+severity ordering across the four sites — based on fire history, vegetation age,
+and invasive species presence from BioSCape survey records.
 
 | Site | Expert Rank | Bioacoustic Vitality | NDVI |
 |------|:-----------:|:--------------------:|:----:|

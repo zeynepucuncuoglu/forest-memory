@@ -23,18 +23,18 @@ That's why I turned to **BioSCape** (Biodiversity Survey of the Cape, South Afri
 
 ## The Core Finding
 
-Satellite NDVI (vegetation greenness) has a critical blind spot: invasive plants look green. A forest taken over by invasive species can score the highest greenness index while its native wildlife has entirely collapsed.
+Satellite NDVI (vegetation greenness) has a critical blind spot: invasive plants look green. A forest taken over by invasive species can score the highest greenness index while its bioacoustic vitality proxy is the lowest in the sample — a stress signal invisible from space.
 
 Across 4 BioSCape monitoring sites:
 
-| Site | Expert Rank | Bioacoustic Vitality | NDVI |
+| Site | Metadata-Derived Rank | Bioacoustic Vitality | NDVI |
 |------|:-----------:|:--------------------:|:----:|
 | Healthy Baseline | 4 — best | 41.1 ✅ | 0.507 |
 | Burned Recovering | 3 | 35.2 ✅ | 0.508 |
 | **Invasive Disturbed** | **2 — degraded** | **31.1** 🔴 | **0.677** 🟢 highest |
 | Wet/Dry Pair | 1 — poorest | 10.8 ✅ | — |
 
-Bioacoustic vitality scores show perfect rank-order agreement with BioSCape expert classifications (Spearman ρ = 1.00, n = 4). NDVI alone would rank the most degraded site as the healthiest.
+Bioacoustic vitality scores show perfect rank-order agreement with a metadata-derived ecological severity ordering (Spearman ρ = 1.00, n = 4). NDVI alone would rank the most degraded site as the healthiest.
 
 ---
 
